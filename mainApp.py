@@ -10,8 +10,8 @@ from PyQt5.QtWidgets import (QWidget, QApplication,
                              QGroupBox, QHBoxLayout,
                              QVBoxLayout, QListWidget, QTreeView)
 
-from simplify3D_fff.CustomWidgets import DropArea
-from simplify3D_fff.xmltodict import XmlDictConfig
+from CustomWidgets import DropArea
+from xmltodict import XmlDictConfig
 
 
 class MainWindow(QWidget):
@@ -76,12 +76,24 @@ class MainWindow(QWidget):
         preparedRow = (QStandardItem("Title"), QStandardItem("Description"))
         item = standardModel.invisibleRootItem()
         item.appendRow(preparedRow)
-        preparedRow = (QStandardItem("SEcid"), QStandardItem("asdfad"))
-        item.appendRow(preparedRow)
+        self.addDictTree(self.currentDict, item)
         self.contents.setModel(standardModel)
         self.contents.expandAll()
 
         print("dict reading finished")
+
+    def addDictTree(self, data, item):
+        for k,v in data.items():
+            if isinstance(v, dict):
+                childItem = QStandardItem(k)
+                item.appendRow(childItem)
+                self.addDictTree(v, childItem)
+            else:
+                try:
+                    print(k+":"+v)
+                    item.appendRow((QStandardItem(k), QStandardItem(v)))
+                except:
+                    print('Item adding failed')
 
 
 if __name__ == '__main__':
